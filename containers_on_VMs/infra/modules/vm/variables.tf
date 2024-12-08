@@ -10,6 +10,10 @@ variable "backend-subnet" {
     description = "backend subnet"
 }
 
+variable "user_assigned_identity" {
+    description = "uami for acr pull for VMs"
+}
+
 variable "tag" {
     type = string
 }
