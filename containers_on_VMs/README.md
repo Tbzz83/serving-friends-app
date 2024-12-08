@@ -81,3 +81,6 @@ adminuser@frontend-server:~$ sudo docker run -p 80:80 -e VITE_API_BASE_URL=http:
 
 And we can see that are app is working when we access the application using the public IP of our frontend machine.
 
+![image](https://github.com/user-attachments/assets/271e0932-0a2b-403a-a6cb-12cc042a85a5)
+
+
