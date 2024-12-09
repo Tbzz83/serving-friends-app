@@ -7,6 +7,10 @@ git clone https://github.com/Tbzz83/friends-app-frontend.git
 git clone https://github.com/Tbzz83/friends-app-backend.git
 ```
 #### Backend VM Setup
+##### Please note:
+We can just use SQLite for this simple implementation, but in future we
+will switch to using MySQl, so the current version of this repo may not 
+reflect a SQLite configuration.
 Create a Python virtual environment:
 ```bash
 cd ~/friends-app-backend
