@@ -85,4 +85,10 @@ WARNING: This is a development server. Do not use it in a production deployment.
  * Running on http://10.0.1.4:5000
 Press CTRL+C to quit
 ```
+When we go to the public IP of our frontend VM on port 80 we can see that our app is running, and 
+we can succesfully update our friends DB.
+![image](https://github.com/user-attachments/assets/23996c50-e7ea-497f-9ad7-bb76674397b1)
+![image](https://github.com/user-attachments/assets/85d45dc1-f109-453d-844d-d5272e298dd1)
+![image](https://github.com/user-attachments/assets/8fe18252-fa84-4e21-872e-e7f1b5db846d)
+
 
