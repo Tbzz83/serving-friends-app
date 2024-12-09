@@ -108,8 +108,7 @@ Now, when you visit the public IP of your frontend VM on port 80, you should be 
 ![image](https://github.com/user-attachments/assets/b2a10534-59bb-4461-9c6a-0ae951214b92)
 
 #### Viewing our infrastructure topology
-![image](https://github.com/user-attachments/assets/16c1f891-4593-4b5f-a1e9-956d0ddbc5c7)
-
+![image](https://github.com/user-attachments/assets/daca74bf-4897-45a5-94bc-ae6545b0f64b)
 
 
 
