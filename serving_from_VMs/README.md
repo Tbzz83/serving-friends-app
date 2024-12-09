@@ -1,45 +1,59 @@
-Let's run our application on a frontend and backend VM, that are in different subnets
-First we'll pull the source code down from the github for the frontend and backend respectively.
+## Setting Up the Frontend and Backend VMs in Different Subnets
+### We'll start by pulling the source code for both the frontend and backend from GitHub:
 
-```
+#### Clone the repositories:
+```bash
 git clone https://github.com/Tbzz83/friends-app-frontend.git
 git clone https://github.com/Tbzz83/friends-app-backend.git
 ```
-Now we'll need to install our packages on the VMs
-Backend:
+#### Backend VM Setup
+Create a Python virtual environment:
+```bash
+cd ~/friends-app-backend
+python3 -m venv venv
+source venv/bin/activate
 ```
-adminuser@backend-server:~/friends-app-backend$ python3 -m venv venv
-adminuser@backend-server:~/friends-app-backend$ source venv/bin/activate
-(venv) adminuser@backend-server:~/friends-app-backend$ pip install -r requirements.txt
+Install the required Python packages:
+```bash
+pip install -r requirements.txt
+Frontend VM Setup
 ```
-
-Frontend:
+Update the package list and install Node.js and npm:
+```bash
+sudo apt update
+sudo apt install -y nodejs npm
 ```
-adminuser@frontend-server:~$ sudo apt update
-adminuser@frontend-server:~$ sudo apt install -y nodejs npm
-adminuser@frontend-server:~$ cd friends-app-frontend 
-adminuser@frontend-server:~$ npm install
+Navigate to the frontend directory and install the required dependencies:
+```bash
+cd friends-app-frontend
+npm install
 ```
-
-In order to properly serve our application, we will also need to install and setup nginx 
-First let's build our nodejs application:
+#### Building and Deploying the Frontend with Nginx
+Build the Node.js application:
+```bash
+npm run build
 ```
-adminuser@frontend-server:~/friends-app-frontend$ npm run build
-```
-Install nginx:
-```
+Install Nginx:
+```bash
 sudo apt update
 sudo apt install nginx -y
+```
+Set up the frontend files in the web directory:
+```bash
 cd /var/www
 sudo mkdir -p friends-app-frontend
 cd ~/friends-app-frontend/
 sudo cp -r dist/* /var/www/friends-app-frontend/
 sudo chown -R www-data:www-data /var/www/friends-app-frontend/
+```
+Configure Nginx:
+```bash
 cd /etc/nginx/sites-available/
 sudo vim friends-app-frontend
 ```
-Put the following code into /etc/nginx/sites-available/friends-app-frontend:
-```
+Add the following Nginx configuration:
+
+```nginx
 server {
     listen 80;
     server_name your-domain.com;
@@ -61,34 +75,37 @@ server {
     }
 }
 ```
-Then we need to symbolically link it in the sites-enabled folder:
-```
+Enable the site by creating a symbolic link:
+```bash
 sudo ln -s /etc/nginx/sites-available/friends-app-frontend /etc/nginx/sites-enabled/
 ```
-Remove the default landing page:
+Remove the default Nginx landing page:
+```bash
+sudo rm /etc/nginx/sites-enabled/default
+sudo rm -rf /var/www/html
 ```
-sudo rm default
-cd /var/www
-sudo rm html -rf
+Restart Nginx to apply the changes:
+```bash
 sudo systemctl restart nginx
 ```
-And we should be good to go
+#### Backend VM Configuration
+Set the Flask host to allow external access:
+```bash
+cd ~/friends-app-backend
+export FLASK_RUN_HOST=0.0.0.0
+```
+Start the Flask app:
+```bash
+flask run
+```
+This will make the backend available at http://10.0.1.4:5000.
 
-On the backend VM:
-```
-(venv) adminuser@backend-server:~/friends-app-backend$ export FLASK_RUN_HOST=0.0.0.0
-(venv) adminuser@backend-server:~/friends-app-backend$ flask run
- * Debug mode: off
-WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://10.0.1.4:5000
-Press CTRL+C to quit
-```
-When we go to the public IP of our frontend VM on port 80 we can see that our app is running, and 
-we can succesfully update our friends DB.
+
+#### Final Steps
+Now, when you visit the public IP of your frontend VM on port 80, you should be able to see the application running. You can also successfully update the friends database through the frontend interface.
 ![image](https://github.com/user-attachments/assets/23996c50-e7ea-497f-9ad7-bb76674397b1)
 ![image](https://github.com/user-attachments/assets/85d45dc1-f109-453d-844d-d5272e298dd1)
-![image](https://github.com/user-attachments/assets/8fe18252-fa84-4e21-872e-e7f1b5db846d)
+![image](https://github.com/user-attachments/assets/b2a10534-59bb-4461-9c6a-0ae951214b92)
+
 
 
