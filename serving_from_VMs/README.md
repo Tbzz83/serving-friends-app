@@ -29,6 +29,12 @@ cd friends-app-frontend
 npm install
 ```
 #### Building and Deploying the Frontend with Nginx
+Before we can run our build, we need to ensure that the endpoint for our
+backend VM is configured. In src/App.jsx, change `BASE_URL` to the private
+IP address of this VM. Here Ill change it to:
+```bash
+export const BASE_URL = import.meta.env.MODE === "development" ? "http://10.0.1.4:5000/api" : "/api";
+```
 Build the Node.js application:
 ```bash
 npm run build
