@@ -1,5 +1,6 @@
 ## Setting Up the Frontend and Backend VMs in Different Subnets
 ### We'll start by pulling the source code for both the frontend and backend from GitHub:
+(Make sure you have connected to the appropriate VM through ssh)
 
 #### Clone the repositories:
 ```bash
