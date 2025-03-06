@@ -31,6 +31,14 @@ resource "azurerm_subnet" "db-subnet" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
+resource "azurerm_subnet" "imaging-subnet" {
+  name                 = "imaging-subnet"
+  resource_group_name  = var.azurerm_resource_group.name
+  virtual_network_name = azurerm_virtual_network.v1-vnet.name
+  address_prefixes     = ["10.0.3.0/24"]
+  
+}
+
 # NSG
 resource "azurerm_network_security_group" "app-nsg" {
   name                = "app-nsg"
@@ -75,6 +83,7 @@ locals {
     "frontend-subnet" = azurerm_subnet.frontend-subnet
     "backend-subnet"  = azurerm_subnet.backend-subnet
     "db-subnet"       = azurerm_subnet.db-subnet
+    "imaging-subnet" = azurerm_subnet.imaging-subnet
   }
 }
 
