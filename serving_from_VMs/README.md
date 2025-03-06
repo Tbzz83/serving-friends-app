@@ -21,8 +21,10 @@ source venv/bin/activate
 Install the required Python packages:
 ```bash
 pip install -r requirements.txt
-Frontend VM Setup
+
 ```
+#### Frontend VM Setup
+##### Building and Deploying the Frontend with Nginx
 Update the package list and install Node.js and npm:
 ```bash
 sudo apt update
@@ -33,7 +35,6 @@ Navigate to the frontend directory and install the required dependencies:
 cd friends-app-frontend
 npm install
 ```
-#### Building and Deploying the Frontend with Nginx
 Before we can run our build, we need to ensure that the endpoint for our
 backend VM is configured. In src/App.jsx, change `BASE_URL` to the private
 IP address of the backend VM. Here Ill change it to:
