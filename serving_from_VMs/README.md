@@ -30,8 +30,9 @@ pip install -r requirements.txt
 ##### Building and Deploying the Frontend with Nginx
 Update the package list and install Node.js and npm:
 ```bash
-sudo apt update
-sudo apt install -y nodejs npm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+source ~/.bashrc
+nvm install v22.14.0
 ```
 Navigate to the frontend directory and install the required dependencies:
 ```bash
