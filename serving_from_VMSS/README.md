@@ -26,7 +26,5 @@ Since the NIC of our internal load balancer exists in the backend-subnet, it sho
 In `App.jsx` for our frontend application, ensure that `BASE_URL` points to this IP address on port 5000, since the load balancer rule expects traffic on this port and will forward it to port 5000 of our backend flask application.
 
 ##### Imaging VMs
-Next we will need to SSH into the two VMs we've created, pull our codebase onto them and then image them to use with our VMSS.
-
-
+Next we will need to SSH into the two VMs we've created, pull our codebase onto them and then image them to use with our VMSS. We have our two VMs for this 
 
