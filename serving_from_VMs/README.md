@@ -15,6 +15,8 @@ reflect a SQLite configuration.
 Create a Python virtual environment:
 ```bash
 cd ~/friends-app-backend
+sudo apt-get update
+sudo apt install pip -y
 python3 -m venv venv
 source venv/bin/activate
 ```
