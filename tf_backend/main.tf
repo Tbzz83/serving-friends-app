@@ -25,6 +25,14 @@ resource "azurerm_storage_account" "tfstate_store" {
   }
 }
 
+resource "azurerm_storage_account_network_rules" "tfstate_store_fw" {
+  storage_account_id = azurerm_storage_account.tfstate_store.id
+
+  default_action             = "Deny"
+  ip_rules                   = [var.source_address_prefix_my_pc]
+  bypass                     = ["Metrics"]
+}
+
 resource "azurerm_storage_container" "tfstate_container" {
   name                  = "tfstatecontainer"
   storage_account_id  = azurerm_storage_account.tfstate_store.id
