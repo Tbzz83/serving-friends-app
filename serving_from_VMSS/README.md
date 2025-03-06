@@ -1,4 +1,5 @@
 #### Well start by creating two VMs, and imaging them so when can use those images for our VMSS
+##### Code preparations
 By this point our code in `friends-app-backend` has been configured to use the MySQL database we've created on Azure. 
 
 This block in `app.py` shows that authentication
@@ -18,5 +19,14 @@ db = SQLAlchemy(app)
 
 # <<< SQL DB setup <<<
 ```
+Since the NIC of our internal load balancer exists in the backend-subnet, it should have a private IP address of `10.0.1.4/24`. Let's check this in Azure to be sure.
+
+![image](https://github.com/user-attachments/assets/a1bafa2c-8ebe-4c2f-803e-99f5c376eeb2)
+
+In `App.jsx` for our frontend application, ensure that `BASE_URL` points to this IP address on port 5000, since the load balancer rule expects traffic on this port and will forward it to port 5000 of our backend flask application.
+
+##### Imaging VMs
+Next we will need to SSH into the two VMs we've created, pull our codebase onto them and then image them to use with our VMSS.
+
 
 
