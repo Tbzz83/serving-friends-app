@@ -13,6 +13,7 @@ variable "name" {
 
 variable "allowed_ips" {
   type = list(string)
+  sensitive = true
 }
 
 variable "mysql_admin_pw" {

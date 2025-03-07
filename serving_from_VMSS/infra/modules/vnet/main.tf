@@ -36,7 +36,7 @@ resource "azurerm_subnet" "imaging-subnet" {
   resource_group_name  = var.azurerm_resource_group.name
   virtual_network_name = azurerm_virtual_network.v1-vnet.name
   address_prefixes     = ["10.0.3.0/24"]
-  
+
 }
 
 # NSG
@@ -58,7 +58,7 @@ resource "azurerm_network_security_rule" "nsgrulessh" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefixes     = [var.source_address_prefix]
+  source_address_prefixes     = var.allowed_ips_list
   destination_address_prefix  = "*"
   resource_group_name         = var.azurerm_resource_group.name
   network_security_group_name = azurerm_network_security_group.app-nsg.name
@@ -72,7 +72,7 @@ resource "azurerm_network_security_rule" "nsgrulessh" {
 #  protocol                    = "Tcp"
 #  source_port_range           = "*"
 #  destination_port_range      = "80"
-#  source_address_prefixes     = [var.source_address_prefix]
+#  source_address_prefixes     = var.allowed_ips_list
 #  destination_address_prefix  = "*"
 #  resource_group_name         = var.azurerm_resource_group.name
 #  network_security_group_name = azurerm_network_security_group.app-nsg.name
@@ -83,7 +83,7 @@ locals {
     "frontend-subnet" = azurerm_subnet.frontend-subnet
     "backend-subnet"  = azurerm_subnet.backend-subnet
     "db-subnet"       = azurerm_subnet.db-subnet
-    "imaging-subnet" = azurerm_subnet.imaging-subnet
+    "imaging-subnet"  = azurerm_subnet.imaging-subnet
   }
 }
 

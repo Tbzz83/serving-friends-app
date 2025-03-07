@@ -25,5 +25,5 @@ module "vm_imaging" {
   location               = module.globals.location
   my_personal_email      = var.my_personal_email
   azurerm_resource_group = data.azurerm_resource_group.education
-  imaging-subnet = data.azurerm_subnet.imaging-subnet
+  imaging-subnet         = data.azurerm_subnet.imaging-subnet
 }

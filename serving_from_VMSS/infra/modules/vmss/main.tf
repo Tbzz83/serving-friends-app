@@ -22,10 +22,10 @@ resource "azurerm_lb_rule" "fe-lb-rule" {
   name                           = "fe-lb-rule-${var.tag}"
   protocol                       = "Tcp"
   frontend_port                  = 80
-  backend_port                   = 80 
+  backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id = azurerm_lb_probe.fehealthprobe.id
-  backend_address_pool_ids = [azurerm_lb_backend_address_pool.febpepool.id]
+  probe_id                       = azurerm_lb_probe.fehealthprobe.id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.febpepool.id]
 }
 
 resource "azurerm_lb_backend_address_pool" "febpepool" {
@@ -46,10 +46,10 @@ resource "azurerm_lb_nat_pool" "fefelbnatpool" {
 
 resource "azurerm_lb_probe" "fehealthprobe" {
   loadbalancer_id = azurerm_lb.fe-lb.id
-  name            = "http-probe"
+  name            = "http-probe-80"
   protocol        = "Http"
   request_path    = "/health"
-  port            = 8080
+  port            = 80
 }
 
 # Frontend VMSS
@@ -60,22 +60,17 @@ resource "azurerm_linux_virtual_machine_scale_set" "frontend-vmss" {
   sku                 = var.vmss_sku
   instances           = 1
   admin_username      = "adminuser"
-  depends_on = [ azurerm_lb_rule.fe-lb-rule ]
+  depends_on          = [azurerm_lb_rule.fe-lb-rule]
 
-  upgrade_mode = "Automatic"
-  health_probe_id = azurerm_lb_probe.fehealthprobe.id 
+  upgrade_mode    = "Automatic"
+  health_probe_id = azurerm_lb_probe.fehealthprobe.id
 
   admin_ssh_key {
     username   = "adminuser"
     public_key = file("~/.ssh/edu_az_vms.pub")
   }
 
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
-    version   = "latest"
-  }
+  source_image_id = var.frontend-image.id
 
   os_disk {
     storage_account_type = "Standard_LRS"
@@ -87,14 +82,28 @@ resource "azurerm_linux_virtual_machine_scale_set" "frontend-vmss" {
     primary = true
 
     ip_configuration {
-      name      = "internal"
-      primary   = true
-      subnet_id = var.frontend-subnet.id
+      name                                   = "internal"
+      primary                                = true
+      subnet_id                              = var.frontend-subnet.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.febpepool.id]
-      load_balancer_inbound_nat_rules_ids = [azurerm_lb_nat_pool.fefelbnatpool.id]
+      load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.fefelbnatpool.id]
     }
   }
+}
 
+# Restart the nginx service to ensure it's running 
+resource "azurerm_virtual_machine_scale_set_extension" "nginx_restart" {
+  name                 = "nginx-restart"
+  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.frontend-vmss.id
+  publisher           = "Microsoft.Azure.Extensions"
+  type                = "CustomScript"
+  type_handler_version = "2.1"
+
+  settings = <<SETTINGS
+    {
+      "commandToExecute": "systemctl restart nginx"
+    }
+  SETTINGS
 }
 
 # Frontend autoscale settings
@@ -174,9 +183,9 @@ resource "azurerm_lb" "be-lb" {
   resource_group_name = var.azurerm_resource_group.name
 
   frontend_ip_configuration {
-    name                 = "PrivateIPAddress"
+    name                          = "PrivateIPAddress"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = var.backend-subnet.id
+    subnet_id                     = var.backend-subnet.id
   }
 }
 
@@ -188,7 +197,7 @@ resource "azurerm_lb_nat_pool" "bebelbnatpool" {
   frontend_port_start            = 50000
   frontend_port_end              = 50119
   backend_port                   = 22
-  frontend_ip_configuration_name = "PrivateIPAddress"
+  frontend_ip_configuration_name = azurerm_lb.be-lb.frontend_ip_configuration[0].name
 }
 
 resource "azurerm_lb_backend_address_pool" "bebpepool" {
@@ -200,22 +209,22 @@ resource "azurerm_lb_rule" "be-lb-rule" {
   loadbalancer_id                = azurerm_lb.be-lb.id
   name                           = "be-lb-rule-${var.tag}"
   protocol                       = "Tcp"
-  frontend_port                  = 5000 
-  backend_port                   = 5000 
-  frontend_ip_configuration_name = "PrivateIPAddress"
-  probe_id = azurerm_lb_probe.behealthprobe.id
-  backend_address_pool_ids = [azurerm_lb_backend_address_pool.bebpepool.id]
+  frontend_port                  = 5000
+  backend_port                   = 5000
+  frontend_ip_configuration_name = azurerm_lb.be-lb.frontend_ip_configuration[0].name
+  probe_id                       = azurerm_lb_probe.behealthprobe.id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bebpepool.id]
 }
 
 resource "azurerm_lb_probe" "behealthprobe" {
   loadbalancer_id = azurerm_lb.be-lb.id
   name            = "http-probe"
   protocol        = "Http"
-  request_path    = "/health"
-  port            = 8080
+  request_path    = "/api/friends"
+  port            = 5000
 }
 
-# Frontend VMSS
+# Backend VMSS
 resource "azurerm_linux_virtual_machine_scale_set" "backend-vmss" {
   name                = "backend-vmss-${var.tag}"
   resource_group_name = var.azurerm_resource_group.name
@@ -223,22 +232,17 @@ resource "azurerm_linux_virtual_machine_scale_set" "backend-vmss" {
   sku                 = var.vmss_sku
   instances           = 1
   admin_username      = "adminuser"
-  depends_on = [ azurerm_lb_rule.be-lb-rule ]
+  depends_on          = [azurerm_lb_rule.be-lb-rule]
 
-  upgrade_mode = "Automatic"
-  health_probe_id = azurerm_lb_probe.behealthprobe.id 
+  upgrade_mode    = "Automatic"
+  health_probe_id = azurerm_lb_probe.behealthprobe.id
 
   admin_ssh_key {
     username   = "adminuser"
     public_key = file("~/.ssh/edu_az_vms.pub")
   }
 
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
-    version   = "latest"
-  }
+  source_image_id = var.backend-image.id
 
   os_disk {
     storage_account_type = "Standard_LRS"
@@ -250,14 +254,28 @@ resource "azurerm_linux_virtual_machine_scale_set" "backend-vmss" {
     primary = true
 
     ip_configuration {
-      name      = "internal"
-      primary   = true
-      subnet_id = var.backend-subnet.id
+      name                                   = "internal"
+      primary                                = true
+      subnet_id                              = var.backend-subnet.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bebpepool.id]
-      load_balancer_inbound_nat_rules_ids = [azurerm_lb_nat_pool.bebelbnatpool.id]
+      load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.bebelbnatpool.id]
     }
   }
+}
 
+# Get flask app running
+resource "azurerm_virtual_machine_scale_set_extension" "flask-run" {
+  name                 = "flask-run-${var.tag}"
+  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.backend-vmss.id
+  publisher           = "Microsoft.Azure.Extensions"
+  type                = "CustomScript"
+  type_handler_version = "2.1"
+
+  settings = <<SETTINGS
+    {
+    "commandToExecute": "cp /home/adminuser/friends-app-backend/.env . && . /home/adminuser/friends-app-backend/venv/bin/activate && nohup gunicorn -b 0.0.0.0:5000 --chdir /home/adminuser/friends-app-backend/ app:app > /home/adminuser/gunicorn.log 2>&1 & echo 'Gunicorn started' && exit 0"
+    }
+  SETTINGS
 }
 
 # Frontend autoscale settings
@@ -327,83 +345,5 @@ resource "azurerm_monitor_autoscale_setting" "backend-autoscaling-setting" {
     email {
       custom_emails = [var.my_personal_email]
     }
-  }
-}
-
-# image public IP
-resource "azurerm_public_ip" "image-pip" {
-    count = 2
-    name = "image-pip-${count.index}"
-    resource_group_name = var.azurerm_resource_group.name
-    location = var.location
-    allocation_method = "Static"
-
-    tags = {
-      environment = var.tag
-    }
-}
-
-# Image NIC
-resource "azurerm_network_interface" "image-nic" {
-    count = 2
-    name = "image-nic-${count.index}"
-    resource_group_name = var.azurerm_resource_group.name
-    location = var.location
-
-    ip_configuration {
-      name = "image-ipconfig"
-      private_ip_address_allocation = "Dynamic"
-      public_ip_address_id = azurerm_public_ip.image-pip[count.index].id
-      subnet_id = var.frontend-subnet.id 
-    }
-
-    tags = {
-      environment = var.tag
-    }
-}
-
-# VMs for images
-resource "azurerm_linux_virtual_machine" "image-server" {
-  count = 2
-  name = "image-server-${count.index}"
-  resource_group_name = var.azurerm_resource_group.name
-  location = var.location
-  disable_password_authentication = true
-  size = "Standard_B1s"
-  admin_username = "adminuser"
-
-  network_interface_ids = [azurerm_network_interface.image-nic[count.index].id]
-
-  admin_ssh_key {
-    username = "adminuser"
-    public_key = file("~/.ssh/edu_az_vms.pub")
-  }
-
-  os_disk {
-      caching = "ReadWrite"
-      storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-      publisher = "Canonical"
-      offer     = "0001-com-ubuntu-server-jammy"
-      sku       = "22_04-lts"
-      version   = "latest"
-  }
-
-  tags = {
-    environment = var.tag
-  }
-}
-
-# Shared image gallery for VM images
-resource "azurerm_shared_image_gallery" "app-gallery" {
-  name                = "app_gallery_${var.tag}"
-  resource_group_name = var.azurerm_resource_group.name
-  location            = var.location
-  description         = "Shared images and things."
-
-  tags = {
-    environment = var.tag
   }
 }

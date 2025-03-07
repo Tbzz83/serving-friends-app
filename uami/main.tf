@@ -11,8 +11,8 @@ data "azurerm_resource_group" "education" {
 
 # User-assigned managed identity
 resource "azurerm_user_assigned_identity" "vm_uami_acr" {
-  location = data.azurerm_resource_group.education.location
-  name = "vm_uami_acr"
+  location            = data.azurerm_resource_group.education.location
+  name                = "vm_uami_acr"
   resource_group_name = data.azurerm_resource_group.education.name
 }
 

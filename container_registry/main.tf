@@ -13,7 +13,7 @@ resource "azurerm_container_registry" "edu_acr" {
   resource_group_name     = data.azurerm_resource_group.education.name
   location                = data.azurerm_resource_group.education.location
   sku                     = "Standard"
-  admin_enabled           = true 
+  admin_enabled           = true
   zone_redundancy_enabled = false
 }
 

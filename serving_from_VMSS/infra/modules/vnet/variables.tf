@@ -2,8 +2,8 @@ variable "azurerm_resource_group" {
   description = "resource group object"
 }
 
-variable "source_address_prefix" {
-  type      = string
+variable "allowed_ips_list" {
+  type      = list(string)
   sensitive = true
 }
 

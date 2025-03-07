@@ -38,7 +38,7 @@ module "azurerm_mysql_flexible_server" {
   azurerm_resource_group = data.azurerm_resource_group.education
   # 0.0.0.0 turns on allow all azure resources to access MySQL DB setting in Portal 
   # Allowed ips will be overwritten by 'allow_public_access' in prod so just leave
-  allowed_ips = [var.source_address_prefix_my_pc]
+  allowed_ips = var.allowed_ips_list
 
   mysql_admin_name = "mysqladmin"
   mysql_admin_pw   = var.ai_dev_sql_pw
@@ -49,5 +49,5 @@ module "azurerm_mysql_flexible_server" {
   app_vnet         = data.azurerm_virtual_network.app_vnet
 
   # Set false in prod
-  allow_public_network_access = true
+  allow_public_network_access = false
 }

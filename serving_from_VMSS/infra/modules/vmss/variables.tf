@@ -4,10 +4,12 @@ variable "azurerm_resource_group" {
 
 variable "frontend-subnet" {
   description = "frontend subnet"
+  type = any
 }
 
 variable "backend-subnet" {
   description = "backend subnet"
+  type = any
 }
 
 variable "tag" {
@@ -25,4 +27,16 @@ variable "location" {
 variable "my_personal_email" {
   type      = string
   sensitive = true
+}
+
+variable "frontend-image" {
+  type = any
+}
+
+variable "backend-image" {
+  type = any
+}
+
+variable "app-nsg" {
+  type = any
 }
