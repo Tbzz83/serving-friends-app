@@ -8,7 +8,7 @@ variable "tag" {
   default = "backend"
 }
 
-variable "source_address_prefix_my_pc" {
-  type = string
+variable "allowed_ips_list" {
+  type      = list(string)
   sensitive = true
 }
