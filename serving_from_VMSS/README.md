@@ -1,4 +1,6 @@
 ## Serving from VMSS
+Deploying to VMs is a good first step, but what do we do when we need to dynamically scale our application layers? One VM for the frontend and one for the backend will surely not be enough if our application is getting a lot of traffic. Using a Virtual Machine Scale Set (VMSS) allows us to define backend pools of VMs for both the frontend and backend, as well as autoscaling rules based on metrics like CPU or memory usage!
+
 #### Code preparations
 By this point our code in `friends-app-backend` has been configured to use the MySQL database we've created on Azure. 
 
