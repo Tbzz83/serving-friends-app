@@ -30,6 +30,8 @@ In `App.jsx` for our frontend application, ensure that `BASE_URL` points to this
 #### Imaging VMs
 Next we will need to SSH into the two VMs we've created, pull our codebase onto them and then image them to use with our VMSS. We have our two VMs for this `image-server-0` and `image-server-1`, and we can follow the package set up and installation from the regular VM deployments [here](https://github.com/Tbzz83/serving-friends-app/blob/main/serving_from_VMs/README.md). Do make sure you create a `.env` file on the backend VM and put the MySQL credentials in there.
 
+Once your VMs are set up, capture the VM image for each and save as a generalized image to the image gallery created from the `imaging` terraform module.
+
 #### Deploying
 We can simply deploy the `vmss` module in the terraform code, and it will pull our images from the image gallery, and start hosting our application! We can use the public IP address of the frontend load balancer to access our application.
 
