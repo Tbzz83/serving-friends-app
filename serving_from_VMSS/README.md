@@ -1,5 +1,5 @@
-#### Well start by creating two VMs, and imaging them so when can use those images for our VMSS
-##### Code preparations
+## Serving from VMSS
+#### Code preparations
 By this point our code in `friends-app-backend` has been configured to use the MySQL database we've created on Azure. 
 
 This block in `app.py` shows that authentication
@@ -25,7 +25,7 @@ Since the NIC of our internal load balancer exists in the backend-subnet, it sho
 
 In `App.jsx` for our frontend application, ensure that `BASE_URL` points to this IP address on port 5000, since the load balancer rule expects traffic on this port and will forward it to port 5000 of our backend flask application.
 
-##### Imaging VMs
+#### Imaging VMs
 Next we will need to SSH into the two VMs we've created, pull our codebase onto them and then image them to use with our VMSS. We have our two VMs for this `image-server-0` and `image-server-1`, and we can follow the package set up and installation from the regular VM deployments [here](https://github.com/Tbzz83/serving-friends-app/blob/main/serving_from_VMs/README.md). Do make sure you create a `.env` file on the backend VM and put the MySQL credentials in there.
 
 #### Deploying
