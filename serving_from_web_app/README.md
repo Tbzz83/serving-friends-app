@@ -1,4 +1,4 @@
-## Azure Web App
+## Serving from Azure Web App
 ### Code preparations
 The only real preparations we have to make here is changing the `BASE_URL` for the backend in App.jsx. Usually we would point this to whatever the IP address or FQDN the backend is usually. For the specific case of Azure Web Apps, when we use the API functionality (below) to set the API for the frontend to the Web App of the backend, it establishes a link between the two using the Azure backbone. As per the Azure documentation [here](https://learn.microsoft.com/en-us/azure/static-web-apps/apis-app-service), we should set the route to point to the domain name of the *static* web app (as long as all our routes begin with `/api`, which they do, everything will sync up correctly). Since we can only know what the FQDN of the Static web app is after it's deployed, we will have to check Azure first.
 
