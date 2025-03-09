@@ -83,6 +83,9 @@ Now we can test the application!
 ![image](https://github.com/user-attachments/assets/c1c2d96b-4a81-4e45-8605-e66628386ee4)
 ![image](https://github.com/user-attachments/assets/45d7fb1d-6d8e-4ded-adba-9d2366f6a9c3)
 
+### Automated deployment (CI/CD)
+
+
 
 
 
