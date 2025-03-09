@@ -1,4 +1,7 @@
-### Automated deployment for Frontend
+## CI/CD with GitHub actions and Azure
+Even though deploying code manually is made quite easy with Azure App Service, we still want to implement CI/CD workflows where we can, to allow for as much automation as possible!
+
+### Automated deployment for Frontend Code
 The yaml file for the GitHub actions workflow can be found [here](https://github.com/Tbzz83/friends-app-frontend/tree/main/.github/workflows). This action runs whenever PRs and pushes to main occur. Since we have set up just a development environment, we can just trigger our static web app to build to the live application. 
 #### GitHub set up
 Create a new branch (I'll call mine develop) with `git branch develop` and switch to it with `git checkout develop`. When we push changes to our frontend app to develop and create a PR, we'll want our app to begin a new build. 
@@ -69,3 +72,4 @@ Approving the PR will automatically trigger a new commit to main, meaning a new 
 Once that's finished, the preview version will be destroyed, and we can finally check the live application at the main url!
 
 ![image](https://github.com/user-attachments/assets/0ad8d837-7d70-4ec2-89c5-bce1a261a962)
+### Automated deployment for Backend Code
