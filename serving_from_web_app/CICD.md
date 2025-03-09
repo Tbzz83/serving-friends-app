@@ -73,3 +73,28 @@ Once that's finished, the preview version will be destroyed, and we can finally 
 
 ![image](https://github.com/user-attachments/assets/0ad8d837-7d70-4ec2-89c5-bce1a261a962)
 ### Automated deployment for Backend Code
+Our CI/CD to the web app is going to work different to the static web app. We are going to utilize the staging and production web app slots. When PRs are created, the code will be deployed to the staging slot. When the PR is approved and merged into main, the code will be deployed to the production (default) slot.
+#### GitHub set up
+Create a new branch in the same fashion that we did in the frontend CI/CD setup. 
+
+We first need to download the publish profile of our app service from the Azure portal. Before you do this, ensure you have the following app settings in the terraform code for the app service:
+```
+  app_settings = {
+    "WEBSITE_WEBDEPLOY_USE_SCM" = true
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = 1
+  }
+```
+Once this is done, download the publish profile from the Azure portal, and use it's contents to create a secret in the GitHub repo called 'AZURE_WEBAPP_PUBLISH_PROFILE`. 
+
+![image](https://github.com/user-attachments/assets/28172d98-a840-4268-9bd0-377c21aab24f)
+
+Do the same thing for the staging slot in Azure, however call the secret in GitHub `AZURE_WEBAPP_PUBLISH_PROFILE_STAGING`.
+
+We also need to add three more secrets that will be used to create the `.env` file used for the Python build.
+
+![image](https://github.com/user-attachments/assets/605c3b08-3da5-4177-969e-0d9544a5ec53)
+
+Use the values found in the MySQL authentication/credentials tab in Azure to get these values.
+
+
+
