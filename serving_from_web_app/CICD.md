@@ -73,6 +73,9 @@ Once that's finished, the preview version will be destroyed, and we can finally 
 
 ![image](https://github.com/user-attachments/assets/0ad8d837-7d70-4ec2-89c5-bce1a261a962)
 ### Automated deployment for Backend Code
+yaml code for the backend code is located [here](https://github.com/Tbzz83/friends-app-backend/tree/main/.github/workflows).
+
+
 Our CI/CD to the web app is going to work different to the static web app. We are going to utilize the staging and production web app slots. When PRs are created, the code will be deployed to the staging slot. When the PR is approved and merged into main, the code will be deployed to the production (default) slot. In a real live application we would *never* push changes directly to prod, we would instead deploy to staging and then swap the staging slots once we were happy. This exercise is more to help understand how we can deploy to different slots based on changes to certain branches. In reality, we could have two separate static web apps that are each linked to a different backend slot. We would also likely have many more deployment slots (develop, feature, staging etc.) where commits to `main` would trigger a deployment to staging, ready to be swapped into production. Many ways to skin a cat, but this works for our purposes for now!
 #### GitHub set up
 Create a new branch in the same fashion that we did in the frontend CI/CD setup. 
