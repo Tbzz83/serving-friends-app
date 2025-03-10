@@ -73,16 +73,14 @@ Once that's finished, the preview version will be destroyed, and we can finally 
 
 ![image](https://github.com/user-attachments/assets/0ad8d837-7d70-4ec2-89c5-bce1a261a962)
 ### Automated deployment for Backend Code
-Our CI/CD to the web app is going to work different to the static web app. We are going to utilize the staging and production web app slots. When PRs are created, the code will be deployed to the staging slot. When the PR is approved and merged into main, the code will be deployed to the production (default) slot.
+Our CI/CD to the web app is going to work different to the static web app. We are going to utilize the staging and production web app slots. When PRs are created, the code will be deployed to the staging slot. When the PR is approved and merged into main, the code will be deployed to the production (default) slot. In a real live application we would *never* push changes directly to prod, we would instead deploy to staging and then swap the staging slots once we were happy. This exercise is more to help understand how we can deploy to different slots based on changes to certain branches. In reality, we could have two separate static web apps that are each linked to a different backend slot. We would also likely have many more deployment slots (develop, feature, staging etc.) where commits to `main` would trigger a deployment to staging, ready to be swapped into production. Many ways to skin a cat, but this works for our purposes for now!
 #### GitHub set up
 Create a new branch in the same fashion that we did in the frontend CI/CD setup. 
 
-We first need to download the publish profile of our app service from the Azure portal. Before you do this, ensure you have the following app settings in the terraform code for the app service:
+We first need to download the publish profile of our app service from the Azure portal. Before you do this, ensure you have the following app settings in the terraform code (or through Azure portal) for the app service:
 ```
-  app_settings = {
-    "WEBSITE_WEBDEPLOY_USE_SCM" = true
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = 1
-  }
+"WEBSITE_WEBDEPLOY_USE_SCM" = true
+"SCM_DO_BUILD_DURING_DEPLOYMENT" = 1
 ```
 Once this is done, download the publish profile from the Azure portal, and use it's contents to create a secret in the GitHub repo called 'AZURE_WEBAPP_PUBLISH_PROFILE`. 
 
@@ -95,6 +93,23 @@ We also need to add three more secrets that will be used to create the `.env` fi
 ![image](https://github.com/user-attachments/assets/605c3b08-3da5-4177-969e-0d9544a5ec53)
 
 Use the values found in the MySQL authentication/credentials tab in Azure to get these values.
+#### Testing
+When we create a new PR, we should expect to see our flask application get deployed to the staging slot. When we approve this PR, we should see the app deployed to the production slot.
+
+On PR:
+
+![image](https://github.com/user-attachments/assets/abcad47e-c7e8-4a9d-8107-5d3b686e9631)
+![image](https://github.com/user-attachments/assets/4e04f461-f429-4f9b-9407-e84c8449e19a)
+
+We can see it successfully deployed to our staging slot.
+
+On commit to main:
+
+![image](https://github.com/user-attachments/assets/7033b881-9ee5-400e-a384-c47f91773a22)
+
+![image](https://github.com/user-attachments/assets/f72a2331-8aab-4bb0-8700-daf24e7f2ce1)
+
+Success!!
 
 
 
