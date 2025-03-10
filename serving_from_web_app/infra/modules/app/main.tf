@@ -79,6 +79,17 @@ resource "azurerm_linux_web_app" "app-api" {
   }
 }
 
+# Create the preview url based on default static address url
+locals {
+  static_app_url = split(".", azurerm_static_web_app.ai-insights-ui.default_host_name)
+}
+locals {
+  location_lower = replace(lower(var.location), " ", "")
+}
+locals {
+  preview_url = "${local.static_app_url[0]}-develop.${local.location_lower}.${local.static_app_url[1]}.${local.static_app_url[2]}.${local.static_app_url[3]}"
+}
+
 # Staging slot for API web app
 resource "azurerm_linux_web_app_slot" "staging" {
   name           = "staging"
@@ -88,34 +99,29 @@ resource "azurerm_linux_web_app_slot" "staging" {
 
   # Enable below for VNet integration
   virtual_network_subnet_id = var.api_app_subnet.id
-
-# We can leave out the auth settings for the staging slot so we can 
-# verify our app is working by directly heading to <url>/api/friends
-# If authentication is enabled like below then only the static web app can
-# access our api
   
-#  auth_settings_v2 {
-#    unauthenticated_action = "RedirectToLoginPage"
-#    auth_enabled = true
-#    forward_proxy_convention = "NoProxy"
-#    http_route_api_prefix = "/.auth"
-#    require_authentication = true
-#    require_https = true
-#    runtime_version = "~1"
-#    login {
-#      cookie_expiration_convention = "FixedTime"
-#      cookie_expiration_time = "08:00:00"
-#      nonce_expiration_time = "00:05:00"
-#      preserve_url_fragments_for_logins = false
-#      token_refresh_extension_time = 72
-#      token_store_enabled = false
-#      validate_nonce = true
-#    }
-#
-#    azure_static_web_app_v2 {
-#      client_id = azurerm_static_web_app.app-ui.default_host_name 
-#    }
-#  }
+  auth_settings_v2 {
+    unauthenticated_action = "RedirectToLoginPage"
+    auth_enabled = true
+    forward_proxy_convention = "NoProxy"
+    http_route_api_prefix = "/.auth"
+    require_authentication = true
+    require_https = true
+    runtime_version = "~1"
+    login {
+      cookie_expiration_convention = "FixedTime"
+      cookie_expiration_time = "08:00:00"
+      nonce_expiration_time = "00:05:00"
+      preserve_url_fragments_for_logins = false
+      token_refresh_extension_time = 72
+      token_store_enabled = false
+      validate_nonce = true
+    }
+
+    azure_static_web_app_v2 {
+      client_id = local.preview_url
+    }
+  }
 
   app_settings = {
     "WEBSITES_PORT" = "5000"
