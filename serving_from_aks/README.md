@@ -41,6 +41,10 @@ Make sure you create the secret in both `develop` and `main` namespaces.
 
 Pushes to the develop branch will build and deploy pods to the <frontend/backend>-develop namespace, and when PRs are approved and merged into main they'll be put into the <frontend/backend>-main namespace. This is also intentional, as it ensures that pushes to develop will not produce container images that will be used by pods in the `main` namespace. The naming scheme of the docker images in the ACR follow a similar schema to the pods for this reason as well.
 
+![image](https://github.com/user-attachments/assets/8fb117e0-fe15-496f-bd92-d5799c9402fe)
+
+
+
 #### Considerations
 For simplicity sake, an Ingress controller has not been used for this implementation. Unfortunately this means that the IP of the backend pod has to be public (loadBalancer type) and has to be manually specified in the frontend environment variables (instead of using the kuberenetes DNS resolution). This is because React runs in the browser, and is unable to resolve the DNS of the kubernetes cluster. In a production application, an Ingress controller into the cluster would be used instead of this, and the service type of the frontend and backend deployments would be `clusterIP`
 
