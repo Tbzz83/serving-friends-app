@@ -1,5 +1,5 @@
 ## Serving-Friends-App
-A project showcasing numerous ways to serve the friends-app with!
+A project showcasing numerous ways to serve the friends-app!
 
 This project is intended to showcase serving a web application ([javascript frontend](https://github.com/Tbzz83/friends-app-frontend), [python backend](https://github.com/Tbzz83/friends-app-backend)) from a number of different methods. 
 
