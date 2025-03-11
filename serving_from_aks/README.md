@@ -36,3 +36,19 @@ kubectl create secret generic my-database-secret \
   --from-literal=SQL_PW=mypassword \
   --from-literal=SQL_HOST_DB=mydatabase \
   --namespace=my-namespace
+```
+Make sure you create the secret in both `develop` and `main` namespaces.
+
+Pushes to the develop branch will build and deploy pods to the <frontend/backend>-develop namespace, and when PRs are approved and merged into main they'll be put into the <frontend/backend>-main namespace. This is also intentional, as it ensures that pushes to develop will not produce container images that will be used by pods in the `main` namespace. The naming scheme of the docker images in the ACR follow a similar schema to the pods for this reason as well.
+
+#### Considerations
+For simplicity sake, an Ingress controller has not been used for this implementation. Unfortunately this means that the IP of the backend pod has to be public (loadBalancer type) and has to be manually specified in the frontend environment variables (instead of using the kuberenetes DNS resolution). This is because React runs in the browser, and is unable to resolve the DNS of the kubernetes cluster. In a production application, an Ingress controller into the cluster would be used instead of this, and the service type of the frontend and backend deployments would be `clusterIP`
+
+For now though we can get the public IP from the frontend service, and access our app successfully!
+```
+(base) azeezoe@BBMP814:~$ k get svc friends-app-frontend-main -n friends-app-frontend-main
+NAME                        TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        AGE
+friends-app-frontend-main   LoadBalancer   10.0.203.93   4.152.216.255   80:30119/TCP   21m
+```
+![image](https://github.com/user-attachments/assets/5b24a76b-5f8a-4389-9938-7e474934bbc0)
+
