@@ -11,3 +11,4 @@ Below you will find the links for different ways to host Friends-App using the M
 4. [Serving from Azure Kubernetes Service (AKS) Cluster](https://github.com/Tbzz83/serving-friends-app/tree/main/serving_from_aks)
 
 This is intended to be illustrated from most granular to progressively more scalable, managed, and abstracted solutions. 
+
