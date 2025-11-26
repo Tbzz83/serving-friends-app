@@ -49,7 +49,7 @@ resource "aws_instance" "frontend_ec2" {
   user_data                   = <<-EOF
 #!/bin/bash
 mkdir -p /home/ubuntu/friends-app-frontend
-echo "VITE_REACT_APP_API_BASE_URL=${aws_instance.backend_ec2.private_ip}:5000/api" >> /home/ubuntu/friends-app-frontend/.env
+echo "VITE_REACT_APP_API_BASE_URL=http://${aws_instance.backend_ec2.private_ip}:5000/api" >> /home/ubuntu/friends-app-frontend/.env
 EOF
   tags                        = merge(var.tags, { "Name" = "${var.tags.project_name}-frontend-ec2-${var.tags.env}" })
 }

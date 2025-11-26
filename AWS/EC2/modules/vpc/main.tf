@@ -1,5 +1,7 @@
 resource "aws_vpc" "ec2_vpc" {
   #cidr_block = each.value["cidr"]
+  enable_dns_support = true
+  enable_dns_hostnames = true
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
   tags             = merge(var.tags, { "Name" = "${var.tags.project_name}-vpc-${var.tags.env}" })
@@ -118,15 +120,15 @@ resource "aws_security_group" "rds_secure_grp" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "rds_ingress_personal" {
-  security_group_id = aws_security_group.backend_secure_grp.id
+  security_group_id = aws_security_group.rds_secure_grp.id
   cidr_ipv4         = "${var.my_ip_1}/32"
   ip_protocol       = "tcp"
   from_port         = 3306
   to_port           = 3306
 }
 
-resource "aws_vpc_security_group_ingress_rule" "rds_ingress_backend" {
-  security_group_id = aws_security_group.backend_secure_grp.id
+resource "aws_vpc_security_group_ingress_rule" "rds_ingress_rds" {
+  security_group_id = aws_security_group.rds_secure_grp.id
   cidr_ipv4         = aws_subnet.backend_ec2_sub.cidr_block
   ip_protocol       = "tcp"
   from_port         = 3306
@@ -152,5 +154,15 @@ resource "aws_route_table_association" "frontend_assoc" {
 
 resource "aws_route_table_association" "backend_assoc" {
   subnet_id      = aws_subnet.backend_ec2_sub.id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
+
+resource "aws_route_table_association" "rds_assoc_1" {
+  subnet_id      = aws_subnet.rds_sub_1.id
+  route_table_id = aws_route_table.vpc_route_table.id
+}
+
+resource "aws_route_table_association" "rds_assoc_2" {
+  subnet_id      = aws_subnet.rds_sub_2.id
   route_table_id = aws_route_table.vpc_route_table.id
 }

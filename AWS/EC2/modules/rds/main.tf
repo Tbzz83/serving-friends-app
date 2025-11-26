@@ -9,6 +9,7 @@ resource "aws_db_instance" "rds" {
   db_name                = var.tags.project_name
   engine                 = "mysql"
   db_subnet_group_name   = aws_db_subnet_group.rds_sub_group.name
+  publicly_accessible = true
   vpc_security_group_ids = [var.rds_secure_grp_id]
   instance_class         = "db.t3.micro"
   username               = "mysqladmin"
